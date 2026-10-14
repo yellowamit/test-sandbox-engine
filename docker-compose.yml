@@ -1,0 +1,33 @@
+﻿services:
+  sandbox_db:
+    image: postgres:16-alpine
+    container_name: test_sandbox_postgres
+    environment:
+      POSTGRES_USER: sandbox_user
+      POSTGRES_PASSWORD: sandbox_secret
+      POSTGRES_DB: sandbox_test_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sandbox_user -d sandbox_test_db"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+
+  sut_api:
+    build: .
+    container_name: test_sandbox_api
+    environment:
+      DATABASE_URL: postgresql://sandbox_user:sandbox_secret@sandbox_db:5432/sandbox_test_db
+      APP_ENV: test
+      APP_PORT: 8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      sandbox_db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

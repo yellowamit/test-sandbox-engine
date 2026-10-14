@@ -1,0 +1,50 @@
+[
+  {
+    "requirement_id": "REQ-INT-01",
+    "test_name": "test_successful_checkout_atomic_db_mutation",
+    "module": "tests/integration/test_orders_db_state.py",
+    "status": "PASSED",
+    "duration_ms": 240.95,
+    "error_detail": "None"
+  },
+  {
+    "requirement_id": "REQ-INT-02",
+    "test_name": "test_rejection_on_zero_inventory_no_db_mutation",
+    "module": "tests/integration/test_orders_db_state.py",
+    "status": "PASSED",
+    "duration_ms": 18.38,
+    "error_detail": "None"
+  },
+  {
+    "requirement_id": "REQ-INT-03",
+    "test_name": "test_rejection_on_insufficient_wallet_balance",
+    "module": "tests/integration/test_orders_db_state.py",
+    "status": "PASSED",
+    "duration_ms": 15.79,
+    "error_detail": "None"
+  },
+  {
+    "requirement_id": "REQ-UNIT-01",
+    "test_name": "test_order_item_strictly_positive_quantity",
+    "module": "tests/unit/test_pricing_unit.py",
+    "status": "PASSED",
+    "duration_ms": 0.47,
+    "error_detail": "None"
+  },
+  {
+    "requirement_id": "REQ-UNIT-02",
+    "test_name": "test_checkout_payload_empty_items_rejected",
+    "module": "tests/unit/test_pricing_unit.py",
+    "status": "PASSED",
+    "duration_ms": 0.17,
+    "error_detail": "None"
+  },
+  {
+    "requirement_id": "REQ-UNIT-03",
+    "test_name": "test_pricing_calculation_precision",
+    "module": "tests/unit/test_pricing_unit.py",
+    "status": "PASSED",
+    "duration_ms": 0.11,
+    "error_detail": "None"
+  }
+]
