@@ -1,0 +1,65 @@
+name: Test Sandbox Automation Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  verify-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: sandbox_user
+          POSTGRES_PASSWORD: sandbox_secret
+          POSTGRES_DB: sandbox_test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Database Pre-Flight Verification
+        env:
+          DATABASE_URL: postgresql://sandbox_user:sandbox_secret@localhost:5432/sandbox_test_db
+        run: |
+          python scripts/preflight_check.py
+
+      - name: Seed Deterministic Test Data
+        env:
+          DATABASE_URL: postgresql://sandbox_user:sandbox_secret@localhost:5432/sandbox_test_db
+        run: |
+          python scripts/seed_data.py
+
+      - name: Execute Test Suite with Custom Reporting
+        env:
+          DATABASE_URL: postgresql://sandbox_user:sandbox_secret@localhost:5432/sandbox_test_db
+        run: |
+          pytest -v --cov=app --cov-report=term-missing
+
+      - name: Archive Test Results Matrix
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-execution-reports
+          path: reports/
